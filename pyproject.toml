@@ -1,0 +1,43 @@
+[tool.poetry]
+name = "django-social-network"
+version = "0.1.0"
+description = ""
+authors = ["egor <ega.nik5674@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+psycopg2-binary = "^2.9.9"
+pillow = "^10.3.0"
+python-dotenv = "^1.0.1"
+ipython = "^8.24.0"
+redis = "^5.0.4"
+django-crispy-forms = "^2.1"
+crispy-bootstrap5 = "^2024.2"
+black = "^24.4.2"
+isort = "^5.13.2"
+Django = "4.2"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 119
+exclude = '''
+(
+  /(
+      \.eggs
+    | \.git
+    | \.hg
+    | \.mypy_cache
+    | \.tox
+    | \.venv
+    )/
+
+)
+'''
+
+[tool.isort]
+line_length = 119
