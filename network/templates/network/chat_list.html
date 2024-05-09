@@ -1,0 +1,19 @@
+{% extends 'network/base.html' %}
+
+{% block content %}
+<main class="content">
+    <div class="container p-0">
+
+		<h1 class="h3 mb-3">Сообщения</h1>
+
+		<div class="card">
+			<div class="row g-0">
+				{% include 'includes/inc_network_chat_list.html' %}
+				<div class="col-12 col-lg-7 col-xl-9 chat-frame">
+					<h2>Начните общение с пользователями!</h2>
+				</div>
+			</div>
+		</div>
+	</div>
+</main>
+{% endblock %}
