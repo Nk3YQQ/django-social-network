@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'crispy_bootstrap5',
 
     'users',
+    'network'
 ]
 
 MIDDLEWARE = [
@@ -124,6 +125,10 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+STATICFILES_DIRS = (
+    BASE_DIR / 'static',
+)
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
@@ -134,7 +139,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # Bootstrap settings
-BOOTSTRAP_TEMPLATE_PACK = 'bootstrap5'
+CRISPY_TEMPLATE_PACK = 'bootstrap5'
 
 # Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -161,5 +166,5 @@ AUTH_USER_MODEL = 'users.User'
 # Login settings
 LOGIN_URL = '/users/login'
 
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/chats/'
+LOGOUT_REDIRECT_URL = '/users/login/'
