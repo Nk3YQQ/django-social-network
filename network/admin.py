@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from network.models import Chat, Message, Friendship
+from network.models import Chat, Message
 
 
 @admin.register(Chat)
@@ -11,8 +11,3 @@ class ChatAdmin(admin.ModelAdmin):
 @admin.register(Message)
 class MessageAdmin(admin.ModelAdmin):
     list_display = ('created_at', 'chat', 'sender')
-
-
-@admin.register(Friendship)
-class Friendship(admin.ModelAdmin):
-    list_display = ('user_1', 'user_2', 'status')

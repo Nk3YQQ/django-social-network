@@ -2,7 +2,7 @@ from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.urls import reverse
-from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic import DetailView, ListView
 
 from network.forms import MessageForm
 from network.models import Chat, Message
@@ -16,10 +16,7 @@ class ChatListView(ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        queryset = (
-                queryset.filter(Q(user_1=self.request.user)) |
-                queryset.filter(Q(user_2=self.request.user))
-        )
+        queryset = queryset.filter(Q(user_1=self.request.user)) | queryset.filter(Q(user_2=self.request.user))
         return queryset
 
 
@@ -55,15 +52,17 @@ class ChatDetailView(DetailView):
 
 
 def check_or_create_chat(request, pk):
+    """ Контроллер для проверки или создания чата"""
+
     current_user = request.user
     other_user = User.objects.get(pk=pk)
 
     chat = (
-            Chat.objects.filter(Q(user_1=current_user, user_2=other_user)) |
-            Chat.objects.filter(Q(user_1=other_user, user_2=current_user))
+            Chat.objects.filter(Q(user_1=current_user, user_2=other_user))
+            | Chat.objects.filter(Q(user_1=other_user, user_2=current_user))
     ).first()
 
     if not chat:
         chat = Chat.objects.create(user_1=current_user, user_2=other_user)
 
-    return redirect(reverse('network:chat_detail', kwargs={'pk': chat.pk}))
+    return redirect(reverse("network:chat_detail", kwargs={"pk": chat.pk}))
