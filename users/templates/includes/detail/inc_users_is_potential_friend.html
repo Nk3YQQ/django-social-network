@@ -1,0 +1,10 @@
+<div class="btn-group" role="group">
+    <button id="btnGroupDrop1" type="button" class="btn btn-warning dropdown-toggle"
+            data-bs-toggle="dropdown" aria-expanded="false">
+        Заявка отправлена
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+        <li><a class="dropdown-item" href="{% url 'users:cancel_page_friendship' object.pk %}">Отменить
+            заявку</a></li>
+    </ul>
+</div>

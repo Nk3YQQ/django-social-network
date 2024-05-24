@@ -1,11 +1,11 @@
 from django.contrib.auth.views import LoginView as BaseLoginView
 from django.contrib.auth.views import LogoutView as BaseLogoutView
-from django.db.models import Q
-from django.shortcuts import redirect, get_object_or_404, render
+from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
-from django.views.generic import CreateView, DetailView, ListView, UpdateView, DeleteView
+from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 
-from network.models import Friendship, FriendshipStatus
+from friendship.models import Friendship
+from users.checkers import CheckerOnPage, CheckerOnList
 from users.forms import UserRegisterView
 from users.models import User
 
@@ -15,7 +15,7 @@ class RegisterView(CreateView):
 
     model = User
     form_class = UserRegisterView
-    template_name = 'users/registration.html'
+    template_name = "users/registration.html"
 
     def get_success_url(self):
         return reverse("users:user_detail", args=[self.object.pk])
@@ -27,40 +27,62 @@ class RegisterView(CreateView):
 
 
 class UserListView(ListView):
-    """Контроллер для просмотра пользователей"""
+    """Базовый контроллер для просмотра всех пользователей"""
 
     model = User
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.checker = CheckerOnList(Friendship, self.request.user)
+
+
+class UserAllListView(UserListView):
+    """Контроллер для просмотра всех пользователей"""
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        queryset = queryset.exclude(pk=self.request.user.pk).exclude(is_superuser=True).exclude()
+        queryset = queryset.exclude(pk=self.request.user.pk).exclude(is_superuser=True)
         return queryset
-
-
-class UserFriendshipListView(ListView):
-    """ Контроллер для просмотра друзей """
-
-    model = User
-    template_name = 'users/user_friendship_list.html'
-
-    def get_queryset(self):
-        friendships = Friendship.objects.filter(
-            (Q(user_1=self.request.user) | Q(user_2=self.request.user)) & Q(status=FriendshipStatus.ACCEPTED)
-        )
-
-        friends = []
-        for friendship in friendships:
-            if friendship.user_1 == self.request.user:
-                friends.append(friendship.user_2)
-            else:
-                friends.append(friendship.user_2)
-
-        return friends
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
-        context_data['friend_requests'] = Friendship.objects.filter(user_2=self.request.user, status='pending')
+
+        checker = self.checker
+
+        context_data["friend_ids"] = checker.check_for_status_friendship("accepted")
+        context_data["is_requested"] = checker.check_for_status_friendship('pending', 'receiver')
+        context_data["is_pending_user"] = checker.check_for_status_friendship('pending')
+        context_data["is_subscriber"] = checker.check_for_status_friendship('rejected', 'receiver')
+        context_data["is_rejected_user"] = checker.check_for_status_friendship('rejected')
+
         return context_data
+
+
+class UserFriendshipListView(UserListView):
+    """Контроллер для просмотра друзей"""
+
+    template_name = "users/user_friendship_list.html"
+
+    def get_queryset(self):
+        return self.checker.check_for_friendship("accepted")
+
+
+class UserRequestsListView(UserListView):
+    """Контроллер для просмотра заявок в друзья"""
+
+    template_name = "users/user_requests_list.html"
+
+    def get_queryset(self):
+        return self.checker.check_for_friendship("pending")
+
+
+class UserRejectedListView(UserListView):
+    """Контроллер для просмотра подписчиков"""
+
+    template_name = "users/user_rejected_list.html"
+
+    def get_queryset(self):
+        return self.checker.check_for_friendship("rejected")
 
 
 class UserDetailView(DetailView):
@@ -70,17 +92,29 @@ class UserDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
-        context_data['user_data'] = [
-            {'name': 'Полное имя', 'value': self.object},
-            {'name': 'Электронная почта', 'value': self.object.email},
-            {'name': 'Пол', 'value': self.object.gender},
-            {'name': 'Телефон', 'value': self.object.phone},
+
+        current_user = self.request.user
+
+        other_user = get_object_or_404(User, pk=self.kwargs["pk"])
+
+        checker = CheckerOnPage(Friendship, current_user, other_user)
+
+        friend_list = checker.create_friendship_list()
+
+        context_data["user_data"] = [
+            {"name": "Полное имя", "value": self.object},
+            {"name": "Электронная почта", "value": self.object.email},
+            {"name": "Пол", "value": self.object.gender},
+            {"name": "Телефон", "value": self.object.phone},
         ]
-        friend = get_object_or_404(User, pk=self.kwargs['pk'])
-        context_data['is_potential_friend'] = Friendship.objects.filter(user_1=self.request.user, user_2=friend,
-                                                                        status='pending').exists()
-        context_data['is_friend'] = Friendship.objects.filter(user_1=self.request.user, user_2=friend,
-                                                              status='accepted').exists()
+        context_data["other_user"] = other_user
+        context_data["is_potential_friend"] = checker.is_potential_friend()
+        context_data["is_friend"] = checker.is_friend()
+        context_data["friend_list"] = friend_list
+        context_data["is_subscriber"] = checker.is_subscriber()
+        context_data["is_requested"] = checker.is_requested()
+        context_data["friend_count"] = len(friend_list)
+
         return context_data
 
 
@@ -102,7 +136,7 @@ class UserDeleteView(DeleteView):
 
 
 class LoginView(BaseLoginView):
-    """ Контроллер для входа в аккаунт """
+    """Контроллер для входа в аккаунт"""
 
     template_name = "users/login.html"
 
@@ -113,56 +147,6 @@ class LoginView(BaseLoginView):
 
 
 class LogoutView(BaseLogoutView):
-    """ Контроллер для выхода из аккаунта """
+    """Контроллер для выхода из аккаунта"""
 
     pass
-
-
-def create_friendship_between_users(request, pk):
-    current_user = request.user
-    other_user = User.objects.get(pk=pk)
-
-    friendship = (
-            Friendship.objects.filter(Q(user_1=current_user, user_2=other_user)) |
-            Friendship.objects.filter(Q(user_1=other_user, user_2=current_user))
-    )
-
-    if not friendship:
-        friendship = Friendship.objects.create(user_1=current_user, user_2=other_user)
-        friendship.status = 'pending'
-        friendship.save()
-
-    return redirect(reverse('users:user_detail', kwargs={'pk': pk}))
-
-
-def cancel_application(request, pk):
-    current_user = request.user
-    other_user = User.objects.get(pk=pk)
-
-    friendship = (
-            Friendship.objects.filter(Q(user_1=current_user, user_2=other_user)) |
-            Friendship.objects.filter(Q(user_1=other_user, user_2=current_user))
-    )
-
-    if friendship:
-        friendship.delete()
-
-    return redirect(reverse('users:user_detail', kwargs={'pk': pk}))
-
-
-def menu_view(request):
-    friend_requests_count = Friendship.objects.filter(user_2=request.user, status='pending').count()
-    print(friend_requests_count)
-    return render(request, 'includes/inc_network_menu.html', {'friend_requests_count': friend_requests_count})
-
-
-def has_been_friend(request):
-    friendship = Friendship.objects.filter(
-        (Q(user_1=request.user) | Q(user_2=request.user)) & Q(status=FriendshipStatus.PENDING)
-    ).first()
-
-    if friendship:
-        friendship.status = 'accepted'
-        friendship.save()
-
-    return redirect(reverse('users:user_friendship_list'))

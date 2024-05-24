@@ -10,7 +10,7 @@
                         <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
                              alt="avatar"
                              class="rounded-circle img-fluid" style="width: 150px;">
-                        <h5 class="my-3">{{ object.first_name }} {{ object.last_name }}</h5>
+                        <h5 class="my-3">{{ object }}</h5>
                         <div class="d-flex justify-content-center mb-2">
                             {% if object == request.user %}
                             <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary">
@@ -18,27 +18,15 @@
                             </button>
                             {% else %}
                             {% if is_potential_friend %}
-                            <div class="btn-group" role="group">
-                                <button id="btnGroupDrop1" type="button" class="btn btn-warning dropdown-toggle"
-                                        data-bs-toggle="dropdown" aria-expanded="false">
-                                    Заявка отправлена
-                                </button>
-                                <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                                    <li><a class="dropdown-item" href="{% url 'users:cancel_application' object.pk %}">Отменить заявку</a></li>
-                                </ul>
-                            </div>
+                            {% include 'includes/detail/inc_users_is_potential_friend.html' %}
                             {% elif is_friend %}
-                            <div class="btn-group" role="group">
-                                <button id="btnGroupDrop2" type="button" class="btn btn-success dropdown-toggle"
-                                        data-bs-toggle="dropdown" aria-expanded="false">
-                                    У Вас в друзьях
-                                </button>
-                                <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                                    <li><a class="dropdown-item" href="{% url 'users:cancel_application' object.pk %}">Удалить из друзей</a></li>
-                                </ul>
-                            </div>
+                            {% include 'includes/detail/inc_users_is_friend.html' %}
+                            {% elif is_requested %}
+                            {% include 'includes/detail/inc_users_is_requested.html' %}
+                            {% elif is_subscriber %}
+                            {% include 'includes/detail/inc_users_is_subscriber.html' %}
                             {% else %}
-                            <a href="{% url 'users:create_friendship_between_users' object.pk %}" data-mdb-button-init
+                            <a href="{% url 'users:create_list_friendship' object.pk %}" data-mdb-button-init
                                data-mdb-ripple-init class="btn btn-primary">Добавить в друзья</a>
                             {% endif %}
                             <a href="{% url 'network:check_or_create_chat' object.pk %}" data-mdb-button-init
@@ -61,6 +49,27 @@
                             </div>
                         </div>
                         <hr>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="card" style="width: 408px; height: 190px;">
+                    <div class="card-title">
+                        <p class="card-text ms-3 mt-2">Друзья: {{ friend_count }}</p>
+                    </div>
+                    <div class="card-body mt-1">
+                        {% for friend in friend_list %}
+                        <div class="col-3">
+                            <div class="mx-auto">
+                                <a href="{% url 'users:user_detail' friend.pk  %}">
+                                    <img src="https://bootdey.com/img/Content/avatar/avatar5.png"
+                                         class="rounded-circle ms-3"
+                                         alt="Vanessa Tucker" width="65" height="65">
+                                    <p style="font-size: 12pt;">{{ friend }}</p>
+                                </a>
+                            </div>
+                        </div>
                         {% endfor %}
                     </div>
                 </div>

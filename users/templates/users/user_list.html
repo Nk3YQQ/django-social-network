@@ -1,51 +1,59 @@
-{% extends 'network/base.html' %}
+{% extends 'users/base_user_list.html' %}
 
-{% block content %}
-<div class="container mt-3 mb-4">
-<div class="col-lg-10 mx-auto">
-    <div class="row justify-content-center">
-      <div class="col-md-12">
-        <div class="user-dashboard-info-box table-responsive mb-0 bg-white p-4 shadow-sm">
-          <table class="table manage-candidates-top mb-0">
-            <tbody>
-            {% for object in object_list %}
-              <tr class="candidates-list">
-                <td class="title">
-                  <div class="thumb">
-                    <img class="img-fluid" src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="">
-                  </div>
-                  <div class="candidate-list-details">
-                    <div class="candidate-list-info">
-                      <div class="candidate-list-title">
-                        <h5 class="mb-0"><a href="{% url 'users:user_detail' object.pk %}">{{ object }}</a></h5>
-                      </div>
-                      <div class="candidate-list-option">
-                        <ul class="list-unstyled">
-                          <li><i class="fas fa-filter pr-1"></i>Information Technology</li>
-                          <li><i class="fas fa-map-marker-alt pr-1"></i>Rolling Meadows, IL 60008</li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </td>
-                <td class="candidate-list-favourite-time text-center">
-                  <a class="candidate-list-favourite order-2 text-danger" href="#"><i class="fas fa-heart"></i></a>
-                  <span class="candidate-list-time order-1">Shortlisted</span>
-                </td>
-                <td>
-                  <ul class="list-unstyled mb-0 d-flex justify-content-end">
-                    <li><a href="#" class="text-primary" data-toggle="tooltip" title="" data-original-title="view"><i class="far fa-eye"></i></a></li>
-                    <li><a href="#" class="text-info" data-toggle="tooltip" title="" data-original-title="Edit"><i class="fas fa-pencil-alt"></i></a></li>
-                    <li><a href="#" class="text-danger" data-toggle="tooltip" title="" data-original-title="Delete"><i class="far fa-trash-alt"></i></a></li>
-                  </ul>
-                </td>
-              </tr>
-            {% endfor %}
-            </tbody>
-          </table>
+{% block table %}
+{% for object in object_list %}
+<tr class="candidates-list">
+    <td class="title">
+        <div class="thumb">
+            <img class="img-fluid" src="https://bootdey.com/img/Content/avatar/avatar7.png"
+                 alt="">
         </div>
-      </div>
-    </div>
-  </div>
-</div>
+        <div class="candidate-list-details">
+            <div class="candidate-list-info">
+                <div class="candidate-list-title">
+                    <h5 class="mb-2"><a href="{% url 'users:user_detail' object.pk %}">{{ object }}</a></h5>
+                </div>
+                <div class="candidate-list-option">
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'network:check_or_create_chat' object.pk %}" class="fas fa-filter pr-1">Написать
+                            сообщение</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </td>
+    <td class="candidate-list-favourite-time text-center">
+        {% if object.pk in friend_ids %}
+        <a class="btn btn-danger" href="{% url 'users:cancel_list_friendship' object.pk %}">Удалить из друзей</a>
+        {% elif is_requested %}
+        <div class="btn-group" role="group">
+            <button id="btnGroupDrop3" type="button"
+                    class="btn btn-warning dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Отправил Вам
+                заявку
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="btnGroupDrop3">
+                <li><a class="dropdown-item" href="{% url 'users:pending_list_friendship' object.pk %}">Добавить в
+                    друзья</a></li>
+                <li><a class="dropdown-item" href="{% url 'users:reject_list_friendship' object.pk %}">Убрать в
+                    подписчики</a></li>
+            </ul>
+        </div>
+        {% elif is_potential_friend %}
+        <div class="btn-group" role="group">
+            <button id="btnGroupDrop1" type="button" class="btn btn-warning dropdown-toggle"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                Заявка отправлена
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                <li><a class="dropdown-item" href="{% url 'users:cancel_page_friendship' object.pk %}">Отменить
+                    заявку</a></li>
+            </ul>
+        </div>
+        {% else %}
+        <a href="{% url 'users:create_list_friendship' object.pk %}" class="btn btn-info btn">Добавить в друзья</a>
+        {% endif %}
+    </td>
+</tr>
+{% endfor %}
 {% endblock %}
