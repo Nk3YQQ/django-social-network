@@ -4,7 +4,7 @@
         Заявка отправлена
     </button>
     <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-        <li><a class="dropdown-item" href="{% url 'users:cancel_page_friendship' object.pk %}">Отменить
+        <li><a class="dropdown-item" href="{% url 'friendship:cancel_application_on_page' object.pk %}">Отменить
             заявку</a></li>
     </ul>
 </div>

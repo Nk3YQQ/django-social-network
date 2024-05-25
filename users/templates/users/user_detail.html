@@ -26,7 +26,7 @@
                             {% elif is_subscriber %}
                             {% include 'includes/detail/inc_users_is_subscriber.html' %}
                             {% else %}
-                            <a href="{% url 'users:create_list_friendship' object.pk %}" data-mdb-button-init
+                            <a href="{% url 'friendship:create_friendship_list' object.pk %}" data-mdb-button-init
                                data-mdb-ripple-init class="btn btn-primary">Добавить в друзья</a>
                             {% endif %}
                             <a href="{% url 'network:check_or_create_chat' object.pk %}" data-mdb-button-init
@@ -53,24 +53,24 @@
                     </div>
                 </div>
             </div>
-            <div class="col-4">
-                <div class="card" style="width: 408px; height: 190px;">
+            <div class="col-9">
+                <div class="card" style="width: 350px; height: 190px;">
                     <div class="card-title">
-                        <p class="card-text ms-3 mt-2">Друзья: {{ friend_count }}</p>
+                        <a href="{% url 'users:user_friendship_list' %}" class="card-text ms-3">Друзья: {{ friend_count }}</a>
                     </div>
                     <div class="card-body mt-1">
-                        {% for friend in friend_list %}
-                        <div class="col-3">
-                            <div class="mx-auto">
+                        <div class="d-flex flex-wrap">
+                            {% for friend in friend_list %}
+                            <div class="col-3 text-center">
                                 <a href="{% url 'users:user_detail' friend.pk  %}">
                                     <img src="https://bootdey.com/img/Content/avatar/avatar5.png"
-                                         class="rounded-circle ms-3"
+                                         class="rounded-circle"
                                          alt="Vanessa Tucker" width="65" height="65">
                                     <p style="font-size: 12pt;">{{ friend }}</p>
                                 </a>
                             </div>
+                            {% endfor %}
                         </div>
-                        {% endfor %}
                     </div>
                 </div>
             </div>

@@ -27,9 +27,10 @@
                 У Вас в друзьях
             </button>
             <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                <li><a class="dropdown-item"
-                       href="{% url 'users:cancel_list_friendship' object.pk %}">Удалить из
-                    друзей</a></li>
+                <li><form method="post" action="{% url 'friendship:reject_friendship_list' object.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="dropdown-item">Удалить из друзей</button>
+                </form></li>
             </ul>
         </div>
     </td>

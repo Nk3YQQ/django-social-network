@@ -24,35 +24,10 @@
         </div>
     </td>
     <td class="candidate-list-favourite-time text-center">
-        {% if object.pk in friend_ids %}
-        <a class="btn btn-danger" href="{% url 'users:cancel_list_friendship' object.pk %}">Удалить из друзей</a>
-        {% elif is_requested %}
-        <div class="btn-group" role="group">
-            <button id="btnGroupDrop3" type="button"
-                    class="btn btn-warning dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Отправил Вам
-                заявку
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="btnGroupDrop3">
-                <li><a class="dropdown-item" href="{% url 'users:pending_list_friendship' object.pk %}">Добавить в
-                    друзья</a></li>
-                <li><a class="dropdown-item" href="{% url 'users:reject_list_friendship' object.pk %}">Убрать в
-                    подписчики</a></li>
-            </ul>
-        </div>
-        {% elif is_potential_friend %}
-        <div class="btn-group" role="group">
-            <button id="btnGroupDrop1" type="button" class="btn btn-warning dropdown-toggle"
-                    data-bs-toggle="dropdown" aria-expanded="false">
-                Заявка отправлена
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                <li><a class="dropdown-item" href="{% url 'users:cancel_page_friendship' object.pk %}">Отменить
-                    заявку</a></li>
-            </ul>
-        </div>
-        {% else %}
-        <a href="{% url 'users:create_list_friendship' object.pk %}" class="btn btn-info btn">Добавить в друзья</a>
-        {% endif %}
+        <form method="post" action="{% url 'friendship:create_friendship_list' object.pk %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-info btn">Добавить в друзья</button>
+        </form>
     </td>
 </tr>
 {% endfor %}

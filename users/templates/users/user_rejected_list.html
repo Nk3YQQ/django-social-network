@@ -24,8 +24,10 @@
         </div>
     </td>
     <td class="candidate-list-favourite-time text-center">
-        <a href="{% url 'users:has_been_friend_on_list' object.pk %}" class="btn btn-info btn">Добавить в
-            друзья</a>
+        <form method="post" action="{% url 'friendship:accept_friendship_list' object.pk %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-info btn">Добавить в друзья</button>
+        </form>
     </td>
 </tr>
 {% endfor %}

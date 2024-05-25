@@ -1,7 +1,8 @@
 from django.contrib.auth.views import LoginView as BaseLoginView
 from django.contrib.auth.views import LogoutView as BaseLogoutView
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
+from django.views import View
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 
 from friendship.models import Friendship
@@ -33,29 +34,18 @@ class UserListView(ListView):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.checker = CheckerOnList(Friendship, self.request.user)
+        self.checker = None
+
+    def dispatch(self, request, *args, **kwargs):
+        self.checker = CheckerOnList(Friendship, self.model, self.request.user)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class UserAllListView(UserListView):
     """Контроллер для просмотра всех пользователей"""
 
     def get_queryset(self):
-        queryset = super().get_queryset()
-        queryset = queryset.exclude(pk=self.request.user.pk).exclude(is_superuser=True)
-        return queryset
-
-    def get_context_data(self, **kwargs):
-        context_data = super().get_context_data(**kwargs)
-
-        checker = self.checker
-
-        context_data["friend_ids"] = checker.check_for_status_friendship("accepted")
-        context_data["is_requested"] = checker.check_for_status_friendship('pending', 'receiver')
-        context_data["is_pending_user"] = checker.check_for_status_friendship('pending')
-        context_data["is_subscriber"] = checker.check_for_status_friendship('rejected', 'receiver')
-        context_data["is_rejected_user"] = checker.check_for_status_friendship('rejected')
-
-        return context_data
+        return self.checker.check_for_friendship()
 
 
 class UserFriendshipListView(UserListView):
@@ -64,16 +54,25 @@ class UserFriendshipListView(UserListView):
     template_name = "users/user_friendship_list.html"
 
     def get_queryset(self):
-        return self.checker.check_for_friendship("accepted")
+        return self.checker.check_for_friendship(status="accepted")
 
 
 class UserRequestsListView(UserListView):
-    """Контроллер для просмотра заявок в друзья"""
+    """Контроллер для просмотра отправленных заявок"""
 
     template_name = "users/user_requests_list.html"
 
     def get_queryset(self):
-        return self.checker.check_for_friendship("pending")
+        return self.checker.check_for_friendship(status="pending")
+
+
+class UserReceiversListView(UserListView):
+    """Контроллер для просмотра заявок в друзья от других пользователей"""
+
+    template_name = "users/user_receiver_list.html"
+
+    def get_queryset(self):
+        return self.checker.check_for_friendship(status="pending", receiving=True)
 
 
 class UserRejectedListView(UserListView):
@@ -82,7 +81,7 @@ class UserRejectedListView(UserListView):
     template_name = "users/user_rejected_list.html"
 
     def get_queryset(self):
-        return self.checker.check_for_friendship("rejected")
+        return self.checker.check_for_friendship(status="rejected")
 
 
 class UserDetailView(DetailView):
@@ -105,7 +104,7 @@ class UserDetailView(DetailView):
             {"name": "Полное имя", "value": self.object},
             {"name": "Электронная почта", "value": self.object.email},
             {"name": "Пол", "value": self.object.gender},
-            {"name": "Телефон", "value": self.object.phone},
+            {"name": "Телефон", "value": self.object.phone if self.object.phone else 'Отсутствует'},
         ]
         context_data["other_user"] = other_user
         context_data["is_potential_friend"] = checker.is_potential_friend()
@@ -150,3 +149,12 @@ class LogoutView(BaseLogoutView):
     """Контроллер для выхода из аккаунта"""
 
     pass
+
+
+class RedirectToCurrentUserProfile(View):
+    """ Контроллер для перехода на страницу текущего пользователя """
+
+    def get(self, request):
+        current_user_pk = self.request.user.pk
+
+        return redirect(reverse('users:user_detail', kwargs={'pk': current_user_pk}))
