@@ -40,5 +40,5 @@ class FriendshipHandler:
         ).first()
 
         if friendship:
-            friendship.status = "accepted"
+            friendship.status = "rejected"
             friendship.save()

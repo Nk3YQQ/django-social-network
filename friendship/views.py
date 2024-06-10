@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.views import View
@@ -7,7 +8,7 @@ from friendship.services import FriendshipHandler
 from users.models import User
 
 
-class FriendshipActionView(View):
+class FriendshipActionView(LoginRequiredMixin, View):
     """Базовый обработчик для модели дружбы"""
 
     action = None
@@ -36,7 +37,8 @@ class FriendshipActionView(View):
         }
         return action_map.get(self.action)
 
-    def post(self, request, pk):
+    def post(self, request, *args, **kwargs):
+        pk = kwargs.get('pk')
         action_function = self.get_action_function(pk)
         if action_function:
             action_function()
@@ -48,44 +50,43 @@ class FriendshipActionView(View):
         return redirect(reverse(self.redirect_view_name, kwargs=self.view_kwargs))
 
 
-class FriendshipActionListView(FriendshipActionView):
-    """Базовый обработчик для действий дружбы в поиске друзей"""
-
-    redirect_view_name = "users:user_list"
-
-
 class FriendshipActionOnPageView(FriendshipActionView):
     """Базовый обработчик для действий дружбы на странице пользователя"""
 
     redirect_view_name = "users:user_detail"
 
-    def post(self, request, pk):
+    def post(self, request, *args, **kwargs):
+        pk = kwargs.get('pk')
         self.view_kwargs = {"pk": pk}
         return super().post(request, pk)
 
 
-class CreateFriendshipListView(FriendshipActionListView):
+class CreateFriendshipListView(FriendshipActionView):
     """Создание дружбы в поиске друзей"""
 
     action = "create"
+    redirect_view_name = "users:user_list"
 
 
-class CancelApplicationListView(FriendshipActionListView):
+class CancelApplicationListView(FriendshipActionView):
     """Отмена дружбы в поиске друзей"""
 
     action = "cancel"
+    redirect_view_name = "users:user_requests_list"
 
 
-class AcceptApplicationListView(FriendshipActionListView):
+class AcceptApplicationListView(FriendshipActionView):
     """Отправка запроса дружбы в поиске друзей"""
 
     action = "accept"
+    redirect_view_name = "users:user_friendship_list"
 
 
-class RejectApplicationListView(FriendshipActionListView):
+class RejectApplicationListView(FriendshipActionView):
     """Отклонение запроса дружбы в поиске друзей"""
 
     action = "reject"
+    redirect_view_name = "users:user_rejected_list"
 
 
 class CreateFriendshipOnPageView(FriendshipActionOnPageView):
@@ -110,3 +111,17 @@ class RejectApplicationOnPageView(FriendshipActionOnPageView):
     """Отклонение запроса дружбы на странице пользователя"""
 
     action = "reject"
+
+
+def friend_request(request):
+    """ Обработчик показывает, сколько друзей у пользователя """
+
+    current_user = request.user
+
+    if current_user.is_authenticated:
+        friend_requests_count = Friendship.objects.filter(user_2=current_user, status="pending").count()
+
+    else:
+        friend_requests_count = 0
+
+    return {'friend_requests_count': friend_requests_count}
