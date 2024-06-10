@@ -1,0 +1,17 @@
+{% load users_tags %}
+
+<div class="thumb">
+    <img class="img-fluid" src="{{ object.avatar|check_user_avatar }}" alt="">
+</div>
+<div class="candidate-list-details">
+    <div class="candidate-list-info">
+        <div class="candidate-list-title">
+            <h5 class="mb-2"><a href="{% url 'users:user_detail' object.pk %}" class="text-reset text-decoration-none">{{ object }}</a></h5>
+        </div>
+        <div class="candidate-list-option">
+            <ul class="list-unstyled">
+                <li><a href="{% url 'chat:check_or_create_chat' object.pk %}" class="fas fa-filter text-reset text-decoration-none pr-1">Написать сообщение</a></li>
+            </ul>
+        </div>
+    </div>
+</div>

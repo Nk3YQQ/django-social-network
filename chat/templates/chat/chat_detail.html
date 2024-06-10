@@ -1,0 +1,62 @@
+{% extends 'network/base.html' %}
+
+{% load my_tags %}
+{% load users_tags %}
+
+{% block content %}
+<main class="content">
+    <div class="container p-0">
+        <div class="card" style="width: 1290px; height: 700px;">
+            <div class="row g-0">
+                {% include 'includes/inc_network_chat_list.html' %}
+                <div class="col-12 col-lg-7 col-xl-9">
+                    <div class="py-2 px-4 border-bottom d-none d-lg-block">
+                        <div class="d-flex align-items-center py-1">
+                            <div class="position-relative avatar-container">
+                                <a href="{% url 'users:user_detail' user.pk %}"><img
+                                        src="{% check_user_avatar_in_chat object request.user %}"
+                                        class="rounded-circle mr-1" alt="Sharon Lessman" width="40" height="40"></a>
+                                <img src="{{ user|check_user_status_in_chat }}" alt="status" class="status-one-chat-indicator">
+                            </div>
+                            <div class="flex-grow-1 ms-2">
+                                <strong>{{ user }}</strong>
+                                <div class="text-muted small ms-3"><em>{{ user.status }}</em></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="position-relative" style="height: 550px;">
+                        <div class="chat-messages p-4">
+                            {% for date, messages in grouped_messages.items %}
+                                <div class="date-header" style="text-align: center;">{{ date }}</div>
+                                {% for message in messages %}
+                                    <div class="chat-message-{% check_div_position message.sender request.user %}">
+                                        <div>
+                                            <a href="{% url 'users:user_detail' pk=request.user.pk %}"><img
+                                                    src="{% check_user_avatar_in_chat object request.user %}"
+                                                    class="rounded-circle mr-1" alt="Chris Wood" width="40" height="40"></a>
+                                            <div class="text-muted small text-nowrap mt-2">{{ message.created_at|date:"H:i" }}</div>
+                                        </div>
+                                        <div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
+                                            <div class="font-weight-bold mb-1">
+                                                <strong>{% check_message_sender message object request.user %}</strong>
+                                            </div>
+                                            {{ message.content }}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <form class="flex-grow-0 py-3 px-4 border-top" method="post">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="content" placeholder="Type your message">
+                            <button class="btn btn-primary">Send</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

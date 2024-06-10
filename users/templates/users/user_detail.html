@@ -1,5 +1,7 @@
 {% extends 'network/base.html' %}
 
+{% load users_tags %}
+
 {% block content %}
 <section>
     <div class="container py-5">
@@ -7,10 +9,13 @@
             <div class="col-lg-4">
                 <div class="card mb-4">
                     <div class="card-body text-center">
-                        <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
-                             alt="avatar"
-                             class="rounded-circle img-fluid" style="width: 150px;">
-                        <h5 class="my-3">{{ object.first_name }} {{ object.last_name }}</h5>
+                        <div class="avatar-container">
+                            <img src="{{ object.avatar|check_user_avatar }}"
+                                 alt="avatar"
+                                 class="rounded-circle img-fluid" style="width: 150px;">
+                            <img src="{{ object.status|check_user_status }}" alt="status" class="status-indicator">
+                        </div>
+                        <h5 class="my-3">{{ object }}</h5>
                         <div class="d-flex justify-content-center mb-2">
                             {% if object == request.user %}
                             <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary">
@@ -18,53 +23,26 @@
                             </button>
                             {% else %}
                             {% if is_potential_friend %}
-                            <div class="btn-group" role="group">
-                                <button id="btnGroupDrop1" type="button" class="btn btn-warning dropdown-toggle"
-                                        data-bs-toggle="dropdown" aria-expanded="false">
-                                    Заявка отправлена
-                                </button>
-                                <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                                    <li><a class="dropdown-item" href="{% url 'users:cancel_application' object.pk %}">Отменить заявку</a></li>
-                                </ul>
-                            </div>
+                            {% include 'includes/detail/inc_users_is_potential_friend.html' %}
                             {% elif is_friend %}
-                            <div class="btn-group" role="group">
-                                <button id="btnGroupDrop2" type="button" class="btn btn-success dropdown-toggle"
-                                        data-bs-toggle="dropdown" aria-expanded="false">
-                                    У Вас в друзьях
-                                </button>
-                                <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                                    <li><a class="dropdown-item" href="{% url 'users:cancel_application' object.pk %}">Удалить из друзей</a></li>
-                                </ul>
-                            </div>
+                            {% include 'includes/detail/inc_users_is_friend.html' %}
+                            {% elif is_requested %}
+                            {% include 'includes/detail/inc_users_is_requested.html' %}
+                            {% elif is_subscriber %}
+                            {% include 'includes/detail/inc_users_is_subscriber.html' %}
                             {% else %}
-                            <a href="{% url 'users:create_friendship_between_users' object.pk %}" data-mdb-button-init
+                            <a href="{% url 'friendship:create_friendship_list' object.pk %}" data-mdb-button-init
                                data-mdb-ripple-init class="btn btn-primary">Добавить в друзья</a>
                             {% endif %}
-                            <a href="{% url 'network:check_or_create_chat' object.pk %}" data-mdb-button-init
+                            <a href="{% url 'chat:check_or_create_chat' object.pk %}" data-mdb-button-init
                                data-mdb-ripple-init class="btn btn-outline-primary ms-1">Написать</a>
                             {% endif %}
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-8">
-                <div class="card mb-4">
-                    <div class="card-body">
-                        {% for data in user_data %}
-                        <div class="row">
-                            <div class="col-sm-3">
-                                <p class="mb-0">{{ data.name }}</p>
-                            </div>
-                            <div class="col-sm-9">
-                                <p class="text-muted mb-0">{{ data.value }}</p>
-                            </div>
-                        </div>
-                        <hr>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
+        {% include 'includes/detail/inc_user_data_list.html' %}
+        {% include 'includes/detail/inc_user_friendship_list.html' %}
         </div>
     </div>
 </section>

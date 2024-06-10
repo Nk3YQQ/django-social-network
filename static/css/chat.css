@@ -43,3 +43,7 @@ body{margin-top:20px;}
 .border-top {
     border-top: 1px solid #dee2e6!important;
 }
+.date-header {
+    font-weight: bold;
+    margin-top: 20px;
+}

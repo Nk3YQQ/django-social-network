@@ -1,0 +1,29 @@
+{% extends 'users/base_user_list.html' %}
+
+{% block table %}
+{% for object in object_list %}
+<tr class="candidates-list">
+    <td class="title">
+    {% include 'includes/inc_user_card.html' %}
+    </td>
+    <td class="candidate-list-favourite-time text-center">
+        <div class="btn-group" role="group">
+            <button id="btnGroupDrop3" type="button"
+                    class="btn btn-warning dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Отправил Вам
+                заявку
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="btnGroupDrop3">
+                <li><form method="post" action="{% url 'friendship:accept_friendship_list' object.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="dropdown-item">Добавить в друзья</button>
+                </form></li>
+                <li><form method="post" action="{% url 'friendship:reject_friendship_list' object.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="dropdown-item">Убрать в подписчики</button>
+                </form></li>
+            </ul>
+        </div>
+    </td>
+</tr>
+{% endfor %}
+{% endblock %}
