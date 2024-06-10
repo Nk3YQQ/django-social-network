@@ -1,0 +1,23 @@
+{% load users_tags %}
+
+<div class="col-9">
+    <div class="card" style="width: 410px; height: 190px;">
+        <div class="card-title">
+            <a href="{% url 'users:user_friendship_list' %}" class="card-text text-reset text-decoration-none ms-3">Друзья: {{ friend_count }}</a>
+        </div>
+        <div class="card-body mt-1">
+            <div class="d-flex flex-wrap">
+                {% for friend in friend_list %}
+                <div class="col-3 text-center">
+                    <a href="{% url 'users:user_detail' friend.pk %}" class="rounded-circle text-reset text-decoration-none">
+                        <img src="{{ object.avatar|check_user_avatar }}"
+                             class="rounded-circle"
+                             alt="Vanessa Tucker" width="65" height="65">
+                        <p style="font-size: 12pt;">{{ friend }}</p>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>

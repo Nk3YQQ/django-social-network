@@ -1,5 +1,7 @@
 {% extends 'network/base.html' %}
 
+{% load users_tags %}
+
 {% block content %}
 <section>
     <div class="container py-5">
@@ -7,9 +9,12 @@
             <div class="col-lg-4">
                 <div class="card mb-4">
                     <div class="card-body text-center">
-                        <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
-                             alt="avatar"
-                             class="rounded-circle img-fluid" style="width: 150px;">
+                        <div class="avatar-container">
+                            <img src="{{ object.avatar|check_user_avatar }}"
+                                 alt="avatar"
+                                 class="rounded-circle img-fluid" style="width: 150px;">
+                            <img src="{{ object.status|check_user_status }}" alt="status" class="status-indicator">
+                        </div>
                         <h5 class="my-3">{{ object }}</h5>
                         <div class="d-flex justify-content-center mb-2">
                             {% if object == request.user %}
@@ -29,51 +34,15 @@
                             <a href="{% url 'friendship:create_friendship_list' object.pk %}" data-mdb-button-init
                                data-mdb-ripple-init class="btn btn-primary">Добавить в друзья</a>
                             {% endif %}
-                            <a href="{% url 'network:check_or_create_chat' object.pk %}" data-mdb-button-init
+                            <a href="{% url 'chat:check_or_create_chat' object.pk %}" data-mdb-button-init
                                data-mdb-ripple-init class="btn btn-outline-primary ms-1">Написать</a>
                             {% endif %}
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-8">
-                <div class="card mb-4">
-                    <div class="card-body">
-                        {% for data in user_data %}
-                        <div class="row">
-                            <div class="col-sm-3">
-                                <p class="mb-0">{{ data.name }}</p>
-                            </div>
-                            <div class="col-sm-9">
-                                <p class="text-muted mb-0">{{ data.value }}</p>
-                            </div>
-                        </div>
-                        <hr>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-            <div class="col-9">
-                <div class="card" style="width: 350px; height: 190px;">
-                    <div class="card-title">
-                        <a href="{% url 'users:user_friendship_list' %}" class="card-text ms-3">Друзья: {{ friend_count }}</a>
-                    </div>
-                    <div class="card-body mt-1">
-                        <div class="d-flex flex-wrap">
-                            {% for friend in friend_list %}
-                            <div class="col-3 text-center">
-                                <a href="{% url 'users:user_detail' friend.pk  %}">
-                                    <img src="https://bootdey.com/img/Content/avatar/avatar5.png"
-                                         class="rounded-circle"
-                                         alt="Vanessa Tucker" width="65" height="65">
-                                    <p style="font-size: 12pt;">{{ friend }}</p>
-                                </a>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-            </div>
+        {% include 'includes/detail/inc_user_data_list.html' %}
+        {% include 'includes/detail/inc_user_friendship_list.html' %}
         </div>
     </div>
 </section>

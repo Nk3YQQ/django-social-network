@@ -4,26 +4,7 @@
 {% for object in object_list %}
 <tr class="candidates-list">
     <td class="title">
-        <div class="thumb">
-            <img class="img-fluid"
-                 src="https://bootdey.com/img/Content/avatar/avatar7.png"
-                 alt="">
-        </div>
-        <div class="candidate-list-details">
-            <div class="candidate-list-info">
-                <div class="candidate-list-title">
-                    <h5 class="mb-2"><a
-                            href="{% url 'users:user_detail' object.pk %}">{{ object }}</a></h5>
-                </div>
-                <div class="candidate-list-option">
-                    <ul class="list-unstyled">
-                        <li><a href="{% url 'network:check_or_create_chat' object.pk %}" class="fas fa-filter pr-1">Написать
-                            сообщение</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+    {% include 'includes/inc_user_card.html' %}
     </td>
     <td class="candidate-list-favourite-time text-center">
         <div class="btn-group" role="group">

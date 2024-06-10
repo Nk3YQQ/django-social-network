@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView as BaseLoginView
 from django.contrib.auth.views import LogoutView as BaseLogoutView
 from django.shortcuts import get_object_or_404, redirect
@@ -27,7 +28,7 @@ class RegisterView(CreateView):
         return context_data
 
 
-class UserListView(ListView):
+class UserListView(LoginRequiredMixin, ListView):
     """Базовый контроллер для просмотра всех пользователей"""
 
     model = User
@@ -84,7 +85,7 @@ class UserRejectedListView(UserListView):
         return self.checker.check_for_friendship(status="rejected")
 
 
-class UserDetailView(DetailView):
+class UserDetailView(LoginRequiredMixin, DetailView):
     """Контроллер для просмотра пользователя"""
 
     model = User
@@ -117,7 +118,7 @@ class UserDetailView(DetailView):
         return context_data
 
 
-class UserUpdateView(UpdateView):
+class UserUpdateView(LoginRequiredMixin, UpdateView):
     """Контроллер для обновления пользователя"""
 
     model = User
@@ -127,7 +128,7 @@ class UserUpdateView(UpdateView):
         return reverse("users:user_detail", args=[self.kwargs.get("pk")])
 
 
-class UserDeleteView(DeleteView):
+class UserDeleteView(LoginRequiredMixin, DeleteView):
     """Контроллер для удаления пользователя"""
 
     model = User
@@ -145,13 +146,13 @@ class LoginView(BaseLoginView):
         return context_data
 
 
-class LogoutView(BaseLogoutView):
+class LogoutView(LoginRequiredMixin, BaseLogoutView):
     """Контроллер для выхода из аккаунта"""
 
     pass
 
 
-class RedirectToCurrentUserProfile(View):
+class RedirectToCurrentUserProfile(LoginRequiredMixin, View):
     """ Контроллер для перехода на страницу текущего пользователя """
 
     def get(self, request):
