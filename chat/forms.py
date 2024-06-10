@@ -1,6 +1,6 @@
 from django import forms
 
-from network.models import Message
+from chat.models import Message
 
 
 class MessageForm(forms.ModelForm):

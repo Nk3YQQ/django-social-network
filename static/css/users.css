@@ -173,3 +173,24 @@ body{
 .user-dashboard-info-box .candidates-list .thumb {
     margin-right: 20px;
 }
+
+.avatar-container {
+    position: relative;
+    display: inline-block;
+}
+
+.avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+}
+
+.status-indicator {
+    position: absolute;
+    bottom: -5px; /* Немного ниже аватарки */
+    right: -5px; /* Немного справа от аватарки */
+    width: 20px; /* Размер индикатора */
+    height: 20px; /* Размер индикатора */
+    border-radius: 50%; /* Делает индикатор круглым, если он не круглый по умолчанию */
+    border: 2px solid white;
+}
