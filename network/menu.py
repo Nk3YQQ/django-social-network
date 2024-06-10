@@ -1,4 +1,4 @@
-from network.models import Friendship
+from friendship.models import Friendship
 
 
 def friend_request(request):
