@@ -5,17 +5,17 @@ services:
     image: postgres:latest
     container_name: pgdb
     env_file:
-      - ../.env
+      - .env
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
   app:
     build:
-      dockerfile: ../Dockerfile
+      dockerfile: Dockerfile
     container_name: app
     command: make runserver
     env_file:
-      - ../.env
+      - .env
     ports:
       - "8000:8000"
     depends_on:
@@ -23,7 +23,7 @@ services:
       - redis
 
   celery:
-    build: .
+    build: dev
     container_name: celery-worker
     command: make celery-worker
     volumes:
@@ -32,7 +32,7 @@ services:
       - redis
 
   celery-beat:
-    build: .
+    build: dev
     container_name: celery-beat
     command: make celery-beat
     volumes:

@@ -18,10 +18,10 @@ run:
 	ansible-playbook -i ansible/inventory.ini ansible/deploy.yml --tags "run"
 
 tests:
-	docker-compose -f dev/docker-compose.yml up --build -d
+	docker-compose -f docker-compose.dev.yml up --build -d
 	docker-compose exec -T app python3 manage.py test
 	docker-compose exec -T app flake8 .
-	docker-compose -f dev/docker-compose.yml down --volumes
+	docker-compose -f docker-compose.dev.yml down --volumes
 
 celery-worker:
 	celery -A config worker --loglevel=info
