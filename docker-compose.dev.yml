@@ -10,8 +10,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   app:
-    build:
-      dockerfile: Dockerfile
+    build: .
     container_name: app
     command: make runserver
     env_file:
