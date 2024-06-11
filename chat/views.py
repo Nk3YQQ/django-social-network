@@ -7,7 +7,7 @@ from django.views.generic import DetailView, ListView
 
 from chat.forms import MessageForm
 from chat.models import Chat, Message
-from chat.services import filter_users_in_chat, filter_chat, filter_chat_by_model, filter_messages_by_date
+from chat.services import filter_chat, filter_chat_by_model, filter_messages_by_date, filter_users_in_chat
 from users.models import User
 
 
@@ -54,7 +54,7 @@ class ChatDetailView(LoginRequiredMixin, DetailView):
 
 @login_required
 def check_or_create_chat(request, pk):
-    """ Контроллер для проверки или создания чата"""
+    """Контроллер для проверки или создания чата"""
 
     current_user = request.user
     other_user = User.objects.get(pk=pk)

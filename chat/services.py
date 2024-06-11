@@ -18,11 +18,10 @@ def filter_chat_by_model(model, current_user, other_user):
 
 
 def filter_messages_by_date(message_model, chat):
-    messages = message_model.objects.filter(
-        chat=chat
-    ).order_by('created_at')
+    messages = message_model.objects.filter(chat=chat).order_by("created_at")
 
-    return {
-        date: list(items)
-        for date, items in groupby(messages, key=lambda x: x.created_at.date())
-    }
+    return {date: list(items) for date, items in groupby(messages, key=lambda x: x.created_at.date())}
+
+
+def create_chat(chat_model, user_1, user_2):
+    return chat_model.objects.create(user_1=user_1, user_2=user_2)
