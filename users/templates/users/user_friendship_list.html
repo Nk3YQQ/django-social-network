@@ -1,0 +1,25 @@
+{% extends 'users/base_user_list.html' %}
+
+{% block table %}
+{% for object in object_list %}
+<tr class="candidates-list">
+    <td class="title">
+    {% include 'includes/inc_user_card.html' %}
+    </td>
+    <td class="candidate-list-favourite-time text-center">
+        <div class="btn-group" role="group">
+            <button id="btnGroupDrop2" type="button" class="btn btn-success dropdown-toggle"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                У Вас в друзьях
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                <li><form method="post" action="{% url 'friendship:reject_friendship_list' object.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="dropdown-item">Удалить из друзей</button>
+                </form></li>
+            </ul>
+        </div>
+    </td>
+</tr>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,13 @@
+<div class="col-md-4">
+    <div class="card">
+        <div class="card-body">
+            <div class="d-grid gap-2">
+                <a href="{% url 'users:user_friendship_list' %}" class="btn btn-light" type="button">Мои друзья</a>
+                <a href="{% url 'users:user_requests_list' %}" class="btn btn-light" type="button">Мои заявки</a>
+                <a href="{% url 'users:user_receivers_list' %}" class="btn btn-light" type="button">Заявки в друзья</a>
+                <a href="{% url 'users:user_rejected_list' %}" class="btn btn-light" type="button">Подписчики</a>
+                <a href="{% url 'users:user_list' %}" class="btn btn-light" type="button">Поиск друзей</a>
+            </div>
+        </div>
+    </div>
+</div>

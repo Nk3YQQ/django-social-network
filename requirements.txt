@@ -1,0 +1,13 @@
+Django==4.2
+gunicorn
+psycopg2-binary
+pillow
+python-dotenv
+ipython
+redis
+django-crispy-forms
+crispy-bootstrap5
+black
+isort
+celery
+django-celery-beat

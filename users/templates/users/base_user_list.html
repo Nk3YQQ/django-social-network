@@ -1,0 +1,23 @@
+{% extends 'network/base.html' %}
+
+{% block content %}
+<div class="container mt-3 mb-4">
+    <div class="row">
+        <div class="col-8">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card user-dashboard-info-box table-responsive mb-0 bg-white p-4 shadow-sm">
+                        <table class="table manage-candidates-top mb-0">
+                            <tbody>
+                            {% block table %}
+                            {% endblock %}
+                        </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% include 'includes/inc_users_menu.html' %}
+    </div>
+</div>
+{% endblock %}

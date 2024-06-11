@@ -1,0 +1,22 @@
+{% load crispy_forms_tags %}
+
+<div class="col-12">
+    <div class="row">
+        <div class="col-6 mx-auto my-auto">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h2>{{ intent.title }}</h2>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <div class="d-grid gap-2 col-3 mx-auto">
+                            <button class="btn btn-primary btn-block mt-2" type="submit">{{ intent.button }}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

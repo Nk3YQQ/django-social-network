@@ -1,0 +1,49 @@
+{% extends 'network/base.html' %}
+
+{% load users_tags %}
+
+{% block content %}
+<section>
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="card mb-4">
+                    <div class="card-body text-center">
+                        <div class="avatar-container">
+                            <img src="{{ object.avatar|check_user_avatar }}"
+                                 alt="avatar"
+                                 class="rounded-circle img-fluid" style="width: 150px;">
+                            <img src="{{ object.status|check_user_status }}" alt="status" class="status-indicator">
+                        </div>
+                        <h5 class="my-3">{{ object }}</h5>
+                        <div class="d-flex justify-content-center mb-2">
+                            {% if object == request.user %}
+                            <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary">
+                                Редактировать
+                            </button>
+                            {% else %}
+                            {% if is_potential_friend %}
+                            {% include 'includes/detail/inc_users_is_potential_friend.html' %}
+                            {% elif is_friend %}
+                            {% include 'includes/detail/inc_users_is_friend.html' %}
+                            {% elif is_requested %}
+                            {% include 'includes/detail/inc_users_is_requested.html' %}
+                            {% elif is_subscriber %}
+                            {% include 'includes/detail/inc_users_is_subscriber.html' %}
+                            {% else %}
+                            <a href="{% url 'friendship:create_friendship_list' object.pk %}" data-mdb-button-init
+                               data-mdb-ripple-init class="btn btn-primary">Добавить в друзья</a>
+                            {% endif %}
+                            <a href="{% url 'chat:check_or_create_chat' object.pk %}" data-mdb-button-init
+                               data-mdb-ripple-init class="btn btn-outline-primary ms-1">Написать</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% include 'includes/detail/inc_user_data_list.html' %}
+        {% include 'includes/detail/inc_user_friendship_list.html' %}
+        </div>
+    </div>
+</section>
+{% endblock %}

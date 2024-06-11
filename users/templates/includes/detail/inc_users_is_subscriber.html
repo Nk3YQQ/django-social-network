@@ -1,0 +1,8 @@
+<div class="btn-group" role="group">
+    <button id="btnGroupDrop4" type="button"
+            class="btn btn-info dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Подписан на Вас
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="btnGroupDrop4">
+        <li><a class="dropdown-item" href="{% url 'friendship:accept_application_on_page' object.pk %}">Добавить в друзья</a></li>
+    </ul>
+</div>
