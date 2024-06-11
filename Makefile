@@ -7,6 +7,10 @@ runserver-dev:
 	python3 manage.py migrate --no-input
 	gunicorn --config gunicorn_config.py config.wsgi:application
 
+deploy-project:
+	docker-compose -f docker-compose.yml down
+	docker-compose -f docker-compose.yml up --build -d
+
 deploy:
 	ansible-playbook -i ansible/inventory.ini ansible/deploy.yml --tags "deploy"
 
