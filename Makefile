@@ -19,6 +19,9 @@ run:
 
 tests:
 	docker-compose -f docker-compose.dev.yml up --build -d
+	docker-compose ps
+	docker-compose logs -f app
+	docker-compose exec -T app python3 manage.py test
 	docker-compose exec -T app flake8 .
 	docker-compose -f docker-compose.dev.yml down --volumes
 
