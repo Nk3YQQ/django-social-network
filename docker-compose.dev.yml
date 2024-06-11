@@ -12,7 +12,7 @@ services:
   app:
     build: .
     container_name: app
-    command: make runserver
+    command: make runserver-dev
     env_file:
       - .env
     ports:
