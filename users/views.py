@@ -7,7 +7,7 @@ from django.views import View
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 
 from friendship.models import Friendship
-from users.checkers import CheckerOnPage, CheckerOnList
+from users.checkers import CheckerOnList, CheckerOnPage
 from users.forms import UserRegisterView
 from users.models import User
 
@@ -105,7 +105,7 @@ class UserDetailView(LoginRequiredMixin, DetailView):
             {"name": "Полное имя", "value": self.object},
             {"name": "Электронная почта", "value": self.object.email},
             {"name": "Пол", "value": self.object.gender},
-            {"name": "Телефон", "value": self.object.phone if self.object.phone else 'Отсутствует'},
+            {"name": "Телефон", "value": self.object.phone if self.object.phone else "Отсутствует"},
         ]
         context_data["other_user"] = other_user
         context_data["is_potential_friend"] = checker.is_potential_friend()
@@ -153,9 +153,9 @@ class LogoutView(LoginRequiredMixin, BaseLogoutView):
 
 
 class RedirectToCurrentUserProfile(LoginRequiredMixin, View):
-    """ Контроллер для перехода на страницу текущего пользователя """
+    """Контроллер для перехода на страницу текущего пользователя"""
 
     def get(self, request):
         current_user_pk = self.request.user.pk
 
-        return redirect(reverse('users:user_detail', kwargs={'pk': current_user_pk}))
+        return redirect(reverse("users:user_detail", kwargs={"pk": current_user_pk}))

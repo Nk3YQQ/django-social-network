@@ -19,9 +19,9 @@ class UpdateUserLastActivityMiddleware(BaseUserMiddleware):
             user.last_activity = self.now
 
             if user.last_activity >= self.online_time:
-                user.status = 'Онлайн'
+                user.status = "Онлайн"
             else:
-                user.status = 'Оффлайн'
+                user.status = "Оффлайн"
 
             user.save()
 
@@ -32,7 +32,7 @@ class CheckUserStatusMiddleware(BaseUserMiddleware):
     def __call__(self, request):
         response = self.get_response(request)
 
-        User.objects.filter(last_activity__gte=self.online_time).update(status='Онлайн')
-        User.objects.filter(last_activity__lt=self.online_time).update(status='Оффлайн')
+        User.objects.filter(last_activity__gte=self.online_time).update(status="Онлайн")
+        User.objects.filter(last_activity__lt=self.online_time).update(status="Оффлайн")
 
         return response

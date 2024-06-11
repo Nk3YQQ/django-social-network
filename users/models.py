@@ -14,10 +14,8 @@ class Gender(models.TextChoices):
 
 class User(AbstractUser):
     """Модель пользователя"""
-    STATUS = [
-        ("Онлайн", "Онлайн"),
-        ("Оффлайн", "Оффлайн")
-    ]
+
+    STATUS = [("Онлайн", "Онлайн"), ("Оффлайн", "Оффлайн")]
 
     username = None
 
@@ -33,7 +31,7 @@ class User(AbstractUser):
     avatar = models.ImageField(upload_to="users/profile/", verbose_name="Аватар", **NULLABLE)
     phone = models.IntegerField(verbose_name="Номер телефона", **NULLABLE)
 
-    status = models.CharField(max_length=50, choices=STATUS, default='Оффлайн')
+    status = models.CharField(max_length=50, choices=STATUS, default="Оффлайн")
     last_activity = models.DateTimeField(default=timezone.now)
 
     def __str__(self):

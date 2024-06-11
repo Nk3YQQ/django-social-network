@@ -28,13 +28,13 @@ class CheckerOnList:
         else:
             friends = self.friendship.objects.filter(
                 Q(user_1=self.current_user) | Q(user_2=self.current_user)
-            ).values_list('user_1', 'user_2')
+            ).values_list("user_1", "user_2")
 
             friends_list = list(friend for sublist in friends for friend in sublist)
 
-            return self.user_model.objects.exclude(
-                Q(pk__in=friends_list) | Q(pk=self.current_user.pk)
-            ).exclude(is_superuser=True)
+            return self.user_model.objects.exclude(Q(pk__in=friends_list) | Q(pk=self.current_user.pk)).exclude(
+                is_superuser=True
+            )
 
 
 class CheckerOnPage:
@@ -46,7 +46,7 @@ class CheckerOnPage:
         self.other_user = other_user
 
     def check_for_status_friendship(self, status):
-        """ Проверка статуса дружбы между двумя пользователями """
+        """Проверка статуса дружбы между двумя пользователями"""
         pass
 
     def is_potential_friend(self):

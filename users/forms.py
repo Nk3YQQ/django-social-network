@@ -9,5 +9,5 @@ class UserRegisterView(UserCreationForm):
         model = User
         fields = ("first_name", "last_name", "email", "birthday_date", "gender", "password1", "password2")
         widgets = {
-            'birthday_date': forms.DateInput(attrs={'type': 'date'}),
+            "birthday_date": forms.DateInput(attrs={"type": "date"}),
         }
