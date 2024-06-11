@@ -38,7 +38,7 @@ class FriendshipActionView(LoginRequiredMixin, View):
         return action_map.get(self.action)
 
     def post(self, request, *args, **kwargs):
-        pk = kwargs.get('pk')
+        pk = kwargs.get("pk")
         action_function = self.get_action_function(pk)
         if action_function:
             action_function()
@@ -56,7 +56,7 @@ class FriendshipActionOnPageView(FriendshipActionView):
     redirect_view_name = "users:user_detail"
 
     def post(self, request, *args, **kwargs):
-        pk = kwargs.get('pk')
+        pk = kwargs.get("pk")
         self.view_kwargs = {"pk": pk}
         return super().post(request, pk)
 
@@ -114,7 +114,7 @@ class RejectApplicationOnPageView(FriendshipActionOnPageView):
 
 
 def friend_request(request):
-    """ Обработчик показывает, сколько друзей у пользователя """
+    """Обработчик показывает, сколько друзей у пользователя"""
 
     current_user = request.user
 
@@ -124,4 +124,4 @@ def friend_request(request):
     else:
         friend_requests_count = 0
 
-    return {'friend_requests_count': friend_requests_count}
+    return {"friend_requests_count": friend_requests_count}
