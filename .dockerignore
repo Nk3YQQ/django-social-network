@@ -87,3 +87,6 @@ venv/
 
 # Ansible
 /ansible
+
+# Nginx
+/nginx
