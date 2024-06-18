@@ -5,7 +5,7 @@ runserver:
 
 runserver-dev:
 	python3 manage.py migrate --no-input
-	gunicorn --config gunicorn_config.py config.wsgi:application
+	python3 manage.py runserver 0.0.0.0:8000
 
 deploy-project:
 	docker-compose -f docker-compose.yml down
